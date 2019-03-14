@@ -15,20 +15,15 @@ tickData = tickData.drop(incomplete_first_day_removal.index)
 incomplete_last_day_removal = tickData.loc[tickData["Date"] == tickData.iloc[-1]["Date"]]
 tickData = tickData.drop(incomplete_last_day_removal.index)
 
-start_unix_stamp = calendar.timegm((datetime.datetime.strptime(str(tickData.iloc[0]["Date"]), "%Y-%m-%d").timetuple()))
-
 first_day_unix = calendar.timegm((datetime.datetime.strptime(str(tickData.iloc[0]["Date"]), "%Y-%m-%d").timetuple()))
 last_day_unix = calendar.timegm((datetime.datetime.strptime(str(tickData.iloc[-1]["Date"]), "%Y-%m-%d").timetuple()))
-total_day_unix = last_day_unix - first_day_unix
 
-daily_loop_unix_stamp = start_unix_stamp
+daily_loop_unix_stamp = first_day_unix
 loop_unix_stamp = daily_loop_unix_stamp
 RV_dataframe = pd.DataFrame(columns=["TimeStamp", "RV"])
 
-
 i = 0
-# in this case total_day_unix equals to 1900800
-while loop_unix_stamp <= start_unix_stamp + 1900800:
+while loop_unix_stamp <= last_day_unix:
     RV_daily = 0
     while loop_unix_stamp <= daily_loop_unix_stamp + 86400:
         condition_1 = tickData["TimeStamp"] < loop_unix_stamp + M_interval

@@ -4,6 +4,9 @@ import datetime
 import calendar
 import math
 
+# set the M here
+M_interval = 3600
+
 tickData = pd.read_csv("DataSource/Sample.csv", names=['TimeStamp', 'Price', 'Quantity'])
 tickData['Date'] = pd.to_datetime(tickData['TimeStamp'], unit='s').dt.date
 
@@ -28,8 +31,7 @@ i = 0
 while loop_unix_stamp <= start_unix_stamp + 1900800:
     RV_daily = 0
     while loop_unix_stamp <= daily_loop_unix_stamp + 86400:
-        # change the interval here
-        condition_1 = tickData["TimeStamp"] < loop_unix_stamp + 3600
+        condition_1 = tickData["TimeStamp"] < loop_unix_stamp + M_interval
         condition_2 = tickData["TimeStamp"] > loop_unix_stamp
         try:
             p_later = tickData[condition_1 & condition_2].iloc[-1]["Price"]
@@ -38,8 +40,7 @@ while loop_unix_stamp <= start_unix_stamp + 1900800:
         except IndexError:
             r = 0
         RV_daily = RV_daily + np.square(r)
-        # change the interval here
-        loop_unix_stamp = loop_unix_stamp + 3600
+        loop_unix_stamp = loop_unix_stamp + M_interval
     RV_dataframe.loc[i] = [daily_loop_unix_stamp, RV_daily]
     i = i + 1
     daily_loop_unix_stamp = daily_loop_unix_stamp + 86400
